@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | Fantom-Adventure-RPG</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+  </head>
+  <body style="background-image: url('https://assets.zyrosite.com/mxBlyJk3v4f0qnxK/jojo-art-YX4XO87g1KtqLDE8.jpg');">
+    <script type="module" src="./libs/index.js"></script>  
+    <script>
+      function clearCache() {
+        o = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+        var t = {
+          name: "UnityCache",
+          version: 3
+        }
+        o.deleteDatabase(t.name);
+        location.reload();
+        //alert("Cache cleared successfully!");
+      }
+    </script>
+    <div id="unity-container" class="unity-desktop">
+           
+      <canvas id="unity-canvas" width=1280 height=720 style="border: 10px solid #000;"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+      <div id="unity-warning"></div>
+      <!--<div id="unity-footer">
+        <div id="unity-webgl-logo"></div>-->
+        <div id="unity-fullscreen-button"></div>
+        <div id="unity-build-title">Full Screen mode</div>
+        <div style="font-family: 'Arial Black', sans-serif; font-size: 28px; color: #010b16; text-shadow: 2px 2px 4px #15669b;">FANTOM ADVENTURE PROTOTYPE REV.B </div>
+      </div>
+    </div>
+    <script>
+      var chains = "fantom";
+      document.body.appendChild(Object.assign(document.createElement("script"), {
+        type: "text/javascript",
+        src: "./network.js"
+      }));
+      // #####################################################################################################################    
+      var initwidth = window.innerWidth;
+      //// var pixelRatio = window.devicePixelRatio || 1;
+      var mainDiv = document.getElementById('unity-container');
+      //  mainDiv.style.width = 1280 / pixelRatio + 'px';
+      // mainDiv.style.height = 720 / pixelRatio + 'px';
+      var pixelRatio = window.devicePixelRatio || 1;
+      var mainCanvas = document.getElementById('unity-canvas');
+      mainCanvas.style.width = 1 / pixelRatio + 'px';
+      mainCanvas.style.height = 1 / pixelRatio + 'px';
+
+      function resize() {
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+          /*
+          mainCanvas.style.position = "absolute";
+          mainCanvas.style.top = "50%";
+          const posi = (window.innerWidth - 720/ pixelRatio)/1;
+          mainCanvas.style.left = posi+'px';
+          mainCanvas.style.transform = "translate(-50%, -50%)";
+          */
+          //   if (document.body.offsetWidth >= 1280 || true) {
+          //     document.getElementById("main").style.textAlign = "center";
+          //   } else {
+          document.getElementById("unity-container").style.textAlign = "center";
+
+          var fullscreenButton = document.getElementById("unity-fullscreen-button");
+          fullscreenButton.style.display = "none";
+
+          var buildTitle = document.getElementById("unity-build-title");
+          buildTitle.style.display = "none";
+
+          //    mainCanvas.style.position = "relative";
+          //    mainCanvas.style.left = Math.abs(((1280 - document.body.offsetWidth)/4)) + 'px';
+          //    mainCanvas.style.left = 70 + 'px';
+          //  }
+          const minCanvasWidth = 1280 / pixelRatio;
+          const maxCanvasWidth = 1280 / pixelRatio;
+          const minCanvasHeight = 720 / pixelRatio;
+          const maxCanvasHeight = 720 / pixelRatio;
+          // Get the width and height of the browser window
+          const windowWidth = window.innerWidth;
+          const windowHeight = window.innerHeight;
+          // Calculate the maximum allowed width and height based on the limits
+          const maxWidth = Math.min(maxCanvasWidth, Math.max(minCanvasWidth, windowWidth));
+          const maxHeight = Math.min(maxCanvasHeight, Math.max(minCanvasHeight, windowHeight));
+          // Calculate the aspect ratio of the canvas
+          const canvasAspectRatio = mainCanvas.width / mainCanvas.height;
+          // Calculate the new width and height of the canvas while maintaining the aspect ratio
+          let newCanvasWidth = maxWidth;
+          let newCanvasHeight = maxHeight / canvasAspectRatio;
+          if (newCanvasHeight > maxHeight) {
+            newCanvasHeight = maxHeight;
+            newCanvasWidth = newCanvasHeight * canvasAspectRatio;
+          }
+          // Set the new width and height of the canvas
+          //body.style.width = 1280/ pixelRatio+'px';
+          mainCanvas.style.width = 1280 / pixelRatio + 'px';
+          mainCanvas.style.height = 720 / pixelRatio + 'px';
+          document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=' + 1280 / pixelRatio + 'px, initial-scale=' + 1);
+          document.body.style.zoom = (1280 / pixelRatio) / window.innerWidth * 100 + "%";
+          if (document.getElementById("unity-container").clientHeight < window.innerHeight) {
+            var Heightoffset = (window.innerHeight - document.getElementById("unity-container").clientHeight) / 2;
+          } else {
+            var Heightoffset = 0;
+          }
+          //const myDiv = document.getElementById('myDiv');
+          //      myDiv.textContent = window.innerWidth+"x"+window.innerHeight+"PR="+window.devicePixelRatio+" canvashight:"+ mainCanvas.style.height+
+          //      " DW:"+Heightoffset;
+          //myDiv.textContent = "openALPHA - expect bugs.";
+          //myDiv.style.height = Heightoffset + 'px';
+          //remove fullscreen mode for Mobile since the size will be wrong.
+          document.getElementById("unity-fullscreen-button").style.display = 'none';
+        } else {
+          mainDiv.style.textAlign = "center";
+          const minCanvasWidth = 1280 / pixelRatio;
+          const maxCanvasWidth = 1280 / pixelRatio;
+          const minCanvasHeight = 720 / pixelRatio;
+          const maxCanvasHeight = 720 / pixelRatio;
+          // Get the width and height of the browser window
+          const windowWidth = window.innerWidth;
+          const windowHeight = window.innerHeight;
+          // Calculate the maximum allowed width and height based on the limits
+          const maxWidth = Math.min(maxCanvasWidth, Math.max(minCanvasWidth, windowWidth));
+          const maxHeight = Math.min(maxCanvasHeight, Math.max(minCanvasHeight, windowHeight));
+          // Calculate the aspect ratio of the canvas
+          const canvasAspectRatio = mainCanvas.width / mainCanvas.height;
+          // Calculate the new width and height of the canvas while maintaining the aspect ratio
+          let newCanvasWidth = maxWidth;
+          let newCanvasHeight = maxHeight / canvasAspectRatio;
+          if (newCanvasHeight > maxHeight) {
+            newCanvasHeight = maxHeight;
+            newCanvasWidth = newCanvasHeight * canvasAspectRatio;
+          }
+          // Set the new width and height of the canvas
+          mainCanvas.style.width = maxWidth + 'px';
+          mainCanvas.style.height = maxHeight + 'px';
+          //const myDiv = document.getElementById('myDiv');
+          //myDiv.textContent = window.innerWidth+"x"+window.innerHeight+"PR="+window.devicePixelRatio;
+          
+          if (document.getElementById("unity-container").clientHeight < window.innerHeight) {
+            var Heightoffset = (window.innerHeight - document.getElementById("unity-container").clientHeight) / 2;
+          } else {
+            var Heightoffset = 0;
+          }
+          //      myDiv.textContent = window.innerWidth+"x"+window.innerHeight+"PR="+window.devicePixelRatio+" canvashight:"+ mainCanvas.style.height+
+          //      " DW:"+Heightoffset;
+          //myDiv.textContent = "openALPHA - expect bugs.";
+          //myDiv.style.height = Heightoffset + 'px';
+        }
+      }
+      resize();
+      //###########################################################################################################################
+    </script>
+    <script>
+      var container = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingBar = document.querySelector("#unity-loading-bar");
+      var progressBarFull = document.querySelector("#unity-progress-bar-full");
+      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+      var warningBanner = document.querySelector("#unity-warning");
+      // Shows a temporary message banner/ribbon for a few seconds, or
+      // a permanent error message on top of the canvas if type=='error'.
+      // If type=='warning', a yellow highlight color is used.
+      // Modify or remove this function to customize the visually presented
+      // way that non-critical warnings and error messages are presented to the
+      // user.
+      function unityShowBanner(msg, type) {
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        }
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else {
+          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+          setTimeout(function() {
+            warningBanner.removeChild(div);
+            updateBannerVisibility();
+          }, 5000);
+        }
+        updateBannerVisibility();
+      }
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/Build.loader.js";
+      var config = {
+        dataUrl: buildUrl + "/Build.data",
+        frameworkUrl: buildUrl + "/Build.framework.js",
+        codeUrl: buildUrl + "/Build.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "Fantom-Adventure-RPG",
+        productVersion: "0.1",
+        showBanner: unityShowBanner,
+      };
+      // By default Unity keeps WebGL canvas render target size matched with
+      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+      // Set this to false if you want to decouple this synchronization from
+      // happening inside the engine, and you would instead like to size up
+      // the canvas DOM size and WebGL render target sizes yourself.
+      // config.matchWebGLToCanvasSize = false;
+      /*      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+              container.className = "unity-mobile";
+              // Avoid draining fillrate performance on mobile devices,
+              // and default/override low DPI mode on mobile browsers.
+              config.devicePixelRatio = 1;
+              unityShowBanner('WebGL builds are not supported on mobile devices.');
+            } else {
+              canvas.style.width = "1280px";
+              canvas.style.height = "720px";
+            }
+      */
+      loadingBar.style.display = "block";
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          progressBarFull.style.width = 100 * progress + "%";
+        }).then((unityInstance) => {
+          window.unityInstance = unityInstance;
+          loadingBar.style.display = "none";
+          fullscreenButton.onclick = () => {
+            unityInstance.SetFullscreen(1);
+          };
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      document.body.appendChild(script);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.3.6/dist/web3.min.js"></script>
+    <script>
+      console.log('gashere');
+      // Connect to the Web3 provider
+      const web3 = new Web3('https://rpc.ankr.com/fantom');
+      // Retrieve the current gas price
+      /*
+      window.getAggressiveGasPrice = async function() {
+      try {
+        // Retrieve the current gas price
+        const gasPrice = await web3.eth.getGasPrice();
+
+        // Convert the gas price to BigInt
+        const gasPriceBigInt = BigInt(gasPrice);
+
+        // Adjust the gas price by multiplying with a factor (e.g., 2 for 100% increase)
+        const aggressiveGasPrice = gasPriceBigInt * BigInt(15) / BigInt(10); // Multiplies by 1.5 as an example
+
+        // Convert the gas price to Gwei or other units if desired
+        const aggressiveGasPriceGwei = web3.utils.fromWei(aggressiveGasPrice.toString(), 'gwei');
+
+        console.log('Aggressive gas price:', aggressiveGasPriceGwei, 'Gwei');
+        window.unityInstance.SendMessage("Web3Manager", "UpdateGasPrice", aggressiveGasPrice.toString());
+        return aggressiveGasPrice.toString(); // Return the aggressive gas price
+      } catch (error) {
+        console.error('Error:', error);
+        throw error; // Throw the error
+      }
+    };
+
+    let zzz = window.getAggressiveGasPrice();
+    console.log('zzzAggressive gas price:', zzz);
+ */ 
+  </script>
+  </body>
+</html>
